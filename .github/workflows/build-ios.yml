@@ -5,7 +5,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'native/**'
+      - 'build-ios.sh'
+      - 'vrasgfx_ios_probe.c'
       - '.github/workflows/build-ios.yml'
 
 permissions:
@@ -19,23 +20,23 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Check Xcode and SDK
+      - name: Check Xcode
         run: |
           xcodebuild -version
           xcrun --sdk iphoneos --show-sdk-version
 
       - name: Build iOS ARM64 dylib
-        run: bash native/build-ios.sh
+        run: bash build-ios.sh
 
       - name: Verify dylib
         run: |
-          file native/build/libvrasgfx_ios_probe.dylib
-          xcrun lipo -info native/build/libvrasgfx_ios_probe.dylib
+          file build/libvrasgfx_ios_probe.dylib
+          xcrun lipo -info build/libvrasgfx_ios_probe.dylib
 
       - name: Upload dylib
         uses: actions/upload-artifact@v4
         with:
           name: VRASGFX-iOS-Native-Probe-dylib
-          path: native/build/libvrasgfx_ios_probe.dylib
+          path: build/libvrasgfx_ios_probe.dylib
           if-no-files-found: error
           retention-days: 14
